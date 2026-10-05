@@ -81,6 +81,30 @@
   }
 }
 
+/* Soft deterrents for menu photography — not DRM; screenshots/network still possible. */
+.protected-media {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
+.protected-media img {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+.protected-media__shield {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
 /* Film-grain overlay; fixed so it doesn't repaint on scroll */
 .grain::before {
   content: '';

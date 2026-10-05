@@ -31,8 +31,17 @@ function DishStage({ item }: { item: MenuItem }) {
     setFailed(false)
   }, [item.slug, item.image])
 
+  const blockCapture = (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
   return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#f1ebe1] lg:aspect-auto lg:h-[min(34rem,calc(100svh-6rem))]">
+    <div
+      className="protected-media relative aspect-[4/5] w-full overflow-hidden bg-[#f1ebe1] lg:aspect-auto lg:h-[min(34rem,calc(100svh-6rem))]"
+      onContextMenu={blockCapture}
+      onDragStart={blockCapture}
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={item.slug}
@@ -50,21 +59,33 @@ function DishStage({ item }: { item: MenuItem }) {
           {hasSrc && !failed && (
             <Image
               src={item.image!}
-              alt={`${item.name} — ${item.description}`}
+              alt=""
               fill
               sizes="(min-width: 1024px) 38vw, 100vw"
+              draggable={false}
               className={`object-cover transition-opacity duration-500 ${showPhoto ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setLoaded(true)}
               onError={() => setFailed(true)}
             />
           )}
 
+          {/* Transparent shield blocks drag-save / long-press on the underlying img */}
+          <div
+            className="protected-media__shield"
+            aria-hidden
+            onContextMenu={blockCapture}
+            onDragStart={blockCapture}
+          />
+
           {showPhoto && (
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-forest/75 via-forest/30 to-transparent px-6 pb-7 pt-24">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-forest/75 via-forest/30 to-transparent px-6 pb-7 pt-24">
               <p className="font-serif text-2xl leading-tight text-cream md:text-3xl">{item.name}</p>
               <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-cream/85">{item.description}</p>
             </div>
           )}
+
+          {/* Screen-reader name kept when decorative alt is emptied for harder “Save image as” UX */}
+          <span className="sr-only">{`${item.name} — ${item.description}`}</span>
         </motion.div>
       </AnimatePresence>
     </div>
